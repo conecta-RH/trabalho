@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Radiações no Cotidiano | Turma 92</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0f2e9 0%, #c8e0d4 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-box {
+            max-width: 650px;
+            width: 100%;
+            background: white;
+            border-radius: 35px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .cabecalho {
+            background: #3a6b4b;
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .cabecalho h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .cabecalho p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .corpo {
+            padding: 30px 25px;
+        }
+
+        .area-pergunta {
+            text-align: center;
+        }
+
+        .contador {
+            background: #eef2f7;
+            display: inline-block;
+            padding: 5px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #3a6b4b;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .texto-pergunta {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a2a3a;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        .opcoes-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .opcao {
+            background: #f8fafc;
+            border: 2px solid #d4e0dc;
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .opcao:hover {
+            background: #e0f0e8;
+            border-color: #3a6b4b;
+        }
+
+        .opcao.selecionada {
+            background: #d4f0e4;
+            border-color: #3a6b4b;
+            box-shadow: 0 2px 6px rgba(58,107,75,0.2);
+        }
+
+        .opcao input {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            accent-color: #3a6b4b;
+            cursor: pointer;
+        }
+
+        .opcao label {
+            font-size: 1rem;
+            color: #1e2f3a;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .botoes-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        button {
+            background: #3a6b4b;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            flex: 1;
+        }
+
+        button:hover {
+            background: #2a523a;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #b0cdbc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-reiniciar {
+            background: #7f8c8d;
+        }
+
+        .btn-reiniciar:hover {
+            background: #5d6e6f;
+        }
+
+        .tela-resultado {
+            text-align: center;
+        }
+
+        .pontuacao {
+            font-size: 3.8rem;
+            font-weight: bold;
+            color: #3a6b4b;
+            margin: 15px 0;
+        }
+
+        .mensagem {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #2c3e44;
+        }
+
+        .detalhes {
+            background: #f0f6f2;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .item-resposta {
+            border-bottom: 1px solid #cbdbe2;
+            padding: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        .item-resposta.certa {
+            color: #2c6e2c;
+        }
+
+        .item-resposta.errada {
+            color: #c0392b;
+        }
+
+        .creditos {
+            margin-top: 25px;
+            padding: 15px;
+            background: #e8f3ed;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .creditos strong {
+            color: #3a6b4b;
+            font-size: 1rem;
+        }
+
+        hr {
+            margin: 10px 0;
+        }
+
+        @media (max-width: 550px) {
+            .corpo {
+                padding: 20px;
+            }
+            .texto-pergunta {
+                font-size: 1.2rem;
+            }
+            .opcao label {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-box">
+    <div class="cabecalho">
+        <h1>☢️ Radiações no Cotidiano ☢️</h1>
+        <p>Quiz simples - 10 perguntas | Turma 92</p>
+    </div>
+    <div class="corpo" id="conteudoQuiz">
+        <!-- conteúdo inserido pelo JS -->
+    </div>
+</div>
+
+<script>
+    // ========== 10 PERGUNTAS (amerício substituído por nova pergunta) ==========
+    const perguntas = [
+        // Pergunta 1 - Aparelho que emite radiação ionizante
+        {
+            texto: "Dos seguintes aparelhos, qual emite radiação ionizante?",
+            opcoes: ["Telefone celular", "Forno micro-ondas", "Aparelho de raios X", "Televisão de LED"],
+            correta: 2  // Aparelho de raios X
+        },
+        // Pergunta 2 - Radiação solar que bronzeia
+        {
+            texto: "A radiação solar que causa o bronzeamento da pele é classificada como:",
+            opcoes: ["Radiação ionizante", "Radiação não-ionizante", "Radiação nuclear", "Radiação alfa"],
+            correta: 1  // Radiação não-ionizante
+        },
+        // Pergunta 3 - Fruta famosa por potássio-40
+        {
+            texto: "Qual dessas frutas é famosa por ser levemente radioativa devido à presença de potássio-40?",
+            opcoes: ["Maçã", "Banana", "Morango", "Abacaxi"],
+            correta: 1  // Banana
+        },
+        // Pergunta 4 - Radiação do celular
+        {
+            texto: "O telefone celular emite que tipo de radiação durante o uso?",
+            opcoes: ["Radiação ionizante (raios X)", "Radiação não-ionizante (radiofrequência)", "Radiação alfa", "Radiação gama"],
+            correta: 1  // Radiação não-ionizante (radiofrequência)
+        },
+        // Pergunta 5 - Fonte de radiação natural (gás radônio)
+        {
+            texto: "Qual das alternativas abaixo representa uma fonte de radiação natural presente no nosso cotidiano?",
+            opcoes: [
+                "O sinal de wi-fi",
+                "O gás radônio emitido pelo solo e rochas",
+                "A luz emitida por lâmpadas LED",
+                "O calor emitido por um secador de cabelo"
+            ],
+            correta: 1  // gás radônio
+        },
+        // Pergunta 6 - Radiação não ionizante (ONDAS DE RÁDIO E TV)
+        {
+            texto: "Qual das alternativas abaixo utiliza radiação não ionizante?",
+            opcoes: ["Ondas de rádio e TV", "Ondas eletromagnéticas", "Raio X", "Raio beta", "Raio gama"],
+            correta: 0  // Ondas de rádio e TV (não ionizante)
+        },
+        // Pergunta 7 - Tomografia computadorizada
+        {
+            texto: "A tomografia computadorizada utiliza qual tipo de radiação para gerar imagens?",
+            opcoes: ["Ultrassom", "Raios X", "Ressonância magnética", "Radiação infravermelha"],
+            correta: 1  // Raios X
+        },
+        // Pergunta 8 - Acidente de Goiânia
+        {
+            texto: "Em 1987, no Brasil, um acidente radioativo aconteceu em qual cidade?",
+            opcoes: ["São Paulo", "Rio de Janeiro", "Goiânia", "Belo Horizonte"],
+            correta: 2
+        },
+        // Pergunta 9 - Protetor solar
+        {
+            texto: "O que devemos passar na pele para nos proteger da radiação ultravioleta (UV) do sol?",
+            opcoes: ["Hidratante comum", "Protetor solar", "Água", "Sabonete"],
+            correta: 1
+        },
+        // Pergunta 10 - NOVA: Radiação em materiais de construção (substituiu o amerício)
+        {
+            texto: "Qual desses materiais de construção pode emitir naturalmente radiação (gás radônio)?",
+            opcoes: ["Tijolo comum", "Granito", "Vidro", "Plástico"],
+            correta: 1  // Granito
+        }
+    ];
+
+    // Variáveis de controle
+    let indiceAtual = 0;
+    let respostasUsuario = new Array(perguntas.length).fill(null);
+    let quizFinalizado = false;
+
+    const container = document.getElementById('conteudoQuiz');
+
+    function renderizar() {
+        if (!container) return;
+
+        if (quizFinalizado) {
+            mostrarResultadoFinal();
+            return;
+        }
+
+        const pergunta = perguntas[indiceAtual];
+        const respostaEscolhida = respostasUsuario[indiceAtual];
+
+        let html = `
+            <div class="area-pergunta">
+                <div class="contador">
+                    Pergunta ${indiceAtual + 1} de ${perguntas.length}
+                </div>
+                <div class="texto-pergunta">
+                    ${pergunta.texto}
+                </div>
+                <div class="opcoes-lista" id="opcoesLista">
+        `;
+
+        pergunta.opcoes.forEach((opcao, idx) => {
+            const isSelecionada = (respostaEscolhida === idx);
+            const classeSelecionada = isSelecionada ? 'selecionada' : '';
+            const letra = String.fromCharCode(97 + idx); // a, b, c, d...
+            html += `
+                <div class="opcao ${classeSelecionada}" data-opcao-idx="${idx}">
+                    <input type="radio" name="perguntaOpcao" value="${idx}" id="alt_${idx}" ${isSelecionada ? 'checked' : ''}>
+                    <label for="alt_${idx}">${letra}) ${opcao}</label>
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+                <div class="botoes-nav">
+                    <button id="btnVoltar" ${indiceAtual === 0 ? 'disabled' : ''}>◀ Voltar</button>
+                    <button id="btnAvancar">${indiceAtual === perguntas.length - 1 ? 'Finalizar' : 'Próximo ▶'}</button>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button id="btnReiniciar" class="btn-reiniciar" style="background:#95a5a6;">↺ Recomeçar</button>
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = html;
+
+        // Eventos para as opções
+        const opcoesDiv = document.querySelectorAll('.opcao');
+        opcoesDiv.forEach(div => {
+            const radio = div.querySelector('input[type="radio"]');
+            div.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') {
+                    if (radio) radio.checked = true;
+                    if (radio) {
+                        const changeEvent = new Event('change', { bubbles: true });
+                        radio.dispatchEvent(changeEvent);
+                    }
+                }
+            });
+
+            if (radio) {
+                radio.addEventListener('change', (e) => {
+                    const valorSelecionado = parseInt(e.target.value);
+                    respostasUsuario[indiceAtual] = valorSelecionado;
+                    document.querySelectorAll('.opcao').forEach(opt => {
+                        opt.classList.remove('selecionada');
+                    });
+                    div.classList.add('selecionada');
+                });
+            }
+        });
+
+        // Botão Voltar
+        const btnVoltar = document.getElementById('btnVoltar');
+        if (btnVoltar) {
+            btnVoltar.addEventListener('click', () => {
+                if (indiceAtual > 0) {
+                    indiceAtual--;
+                    renderizar();
+                }
+            });
+        }
+
+        // Botão Avançar/Finalizar
+        const btnAvancar = document.getElementById('btnAvancar');
+        if (btnAvancar) {
+            btnAvancar.addEventListener('click', () => {
+                if (respostasUsuario[indiceAtual] === null) {
+                    alert("👉 Escolha uma resposta antes de continuar!");
+                    return;
+                }
+                if (indiceAtual === perguntas.length - 1) {
+                    quizFinalizado = true;
+                    renderizar();
+                } else {
+                    indiceAtual++;
+                    renderizar();
+                }
+            });
+        }
+
+        const btnReiniciar = document.getElementById('btnReiniciar');
+        if (btnReiniciar) {
+            btnReiniciar.addEventListener('click', () => {
+                reiniciarQuiz();
+            });
+        }
+    }
+
+    function mostrarResultadoFinal() {
+        let acertos = 0;
+        const detalhes = [];
+
+        perguntas.forEach((pergunta, idx) => {
+            const respostaUser = respostasUsuario[idx];
+            const acertou = (respostaUser === pergunta.correta);
+            if (acertou) acertos++;
+            const textoUser = (respostaUser !== null) ? pergunta.opcoes[respostaUser] : "Não respondida";
+            const textoCorreto = pergunta.opcoes[pergunta.correta];
+            const letraUser = (respostaUser !== null) ? String.fromCharCode(97 + respostaUser) : "?";
+            const letraCorreta = String.fromCharCode(97 + pergunta.correta);
+            detalhes.push({
+                pergunta: pergunta.texto,
+                suaResp: `${letraUser}) ${textoUser}`,
+                respCerta: `${letraCorreta}) ${textoCorreto}`,
+                acertou: acertou
+            });
+        });
+
+        let mensagem = "";
+        if (acertos === 10) mensagem = "🌟 Nota máxima! Você arrasou no tema! 🌟";
+        else if (acertos >= 7) mensagem = "😊 Muito bem! Você sabe bastante sobre radiações!";
+        else if (acertos >= 5) mensagem = "📖 Bom, mas pode aprender mais!";
+        else mensagem = "🌱 Que tal revisar o conteúdo? Radiação está em toda parte!";
+
+        let htmlResultado = `
+            <div class="tela-resultado">
+                <div class="pontuacao">${acertos} / ${perguntas.length}</div>
+                <div class="mensagem">${mensagem}</div>
+                <div class="detalhes">
+                    <strong>📝 Revisão das respostas:</strong><br><br>
+        `;
+
+        detalhes.forEach((det, i) => {
+            const classe = det.acertou ? "certa" : "errada";
+            const icone = det.acertou ? "✅" : "❌";
+            htmlResultado += `
+                <div class="item-resposta ${classe}">
+                    <strong>${i + 1}. ${det.pergunta}</strong><br>
+                    ${icone} Sua resposta: ${det.suaResp}<br>
+                    ✔️ Resposta certa: ${det.respCerta}
+                </div>
+                ${i < detalhes.length - 1 ? '<hr>' : ''}
+            `;
+        });
+
+        htmlResultado += `
+                </div>
+                <button id="btnReiniciarFinal" style="margin: 10px 0 15px 0;">🔄 Fazer o quiz novamente</button>
+                
+                <div class="creditos">
+                    <strong>🎓 Turma 92 - Trabalho em Grupo 🎓</strong><br>
+                    <span style="font-size:1rem;">👥 Gustavo • Heitor • Laura • Bryan 👥</span><br>
+                    📍 Radiações no Cotidiano - Quiz simples e educativo
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = htmlResultado;
+
+        const btnReiniciarFinal = document.getElementById('btnReiniciarFinal');
+        if (btnReiniciarFinal) {
+            btnReiniciarFinal.addEventListener('click', () => {
+                reiniciarQuiz();
+            });
+        }
+    }
+
+    function reiniciarQuiz() {
+        indiceAtual = 0;
+        respostasUsuario = new Array(perguntas.length).fill(null);
+        quizFinalizado = false;
+        renderizar();
+    }
+
+    renderizar();
+</script>
+</body>
+</html>
